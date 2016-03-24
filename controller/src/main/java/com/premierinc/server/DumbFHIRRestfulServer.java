@@ -8,6 +8,8 @@ import com.premierinc.resourceprovider.DumbRestfulOrganizationProvider;
 import com.premierinc.resourceprovider.DumbRestfulPatientResourceProvider;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 /**
@@ -15,20 +17,27 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
  * the URL pattern for this servlet, but we could also
  * define this in a web.xml file.
  */
+@Component
 //@WebServlet(urlPatterns= {"/fhir/*"}, displayName="FHIR Server")
 @WebServlet(urlPatterns = {"/dumb/*"}, displayName = "FHIR Server")
 public class DumbFHIRRestfulServer extends RestfulServer {
 
 	private static final long serialVersionUID = 1L;
 
-	private AnnotationConfigWebApplicationContext myAppCtx;
+	private DumbRestfulPatientResourceProvider dumbRestfulPatientResourceProvider;
+	private DumbRestfulOrganizationProvider dumbRestfulOrganizationProvider;
 
 	/**
 	 * Constructor
 	 */
-	public DumbFHIRRestfulServer() {
+	@Autowired
+	public DumbFHIRRestfulServer(
+			DumbRestfulPatientResourceProvider inDumbRestfulPatientResourceProvider,
+			DumbRestfulOrganizationProvider inDumbRestfulOrganizationProvider
+	) {
+		this.dumbRestfulOrganizationProvider = inDumbRestfulOrganizationProvider;
+		this.dumbRestfulPatientResourceProvider = inDumbRestfulPatientResourceProvider;
 
-		//String serverBaseUrl = "http://foo.com/fhir";
 		String serverBaseUrl = "http://206.71.92.71:8080/dumb";
 		setServerAddressStrategy(new HardcodedServerAddressStrategy(serverBaseUrl));
 
@@ -36,61 +45,15 @@ public class DumbFHIRRestfulServer extends RestfulServer {
 		setResourceProviders(getDumbResourceProviders());
 	}
 
-//	/**
-//	 * The initialize method is automatically called when the servlet is starting up, so it can
-//	 * be used to configure the servlet to define resource providers, or set up
-//	 * configuration, interceptors, etc.
-//	 */
-//	@Override
-//	protected void initialize() throws ServletException {
-//	  /*
-//       * The servlet defines any number of resource providers, and
-//       * configures itself to use them by calling
-//       * setResourceProviders()
-//       */
-//		super.initialize();
-//
-////		// /////////////////////////////////////////////////////////////////////////////
-////		// Get the spring context from the web container (it's declared in web.xml)
-////
-////		WebApplicationContext parentAppCtx = ContextLoaderListener.getCurrentWebApplicationContext();
-////		myAppCtx = new AnnotationConfigWebApplicationContext();
-////		myAppCtx.setServletConfig(getServletConfig());
-////
-////		myAppCtx.refresh();
-////
-////		setFhirContext(FhirContext.forDstu2());
-////
-////		// /////////////////////////////////////////////////////////////////////////////
-////
-////		setResourceProviders(getDumbResourceProviders());
-////
-////		/*
-////		 * Load interceptors for the server from Spring
-////		 */
-////		Collection<IServerInterceptor>
-////				interceptorBeans = myAppCtx.getBeansOfType(IServerInterceptor.class).values();
-////		for (IServerInterceptor interceptor : interceptorBeans) {
-////			this.registerInterceptor(interceptor);
-////		}
-//
-//
-//	}
-
-	@Override
-	public void destroy() {
-		super.destroy();
-		//ourLog.info("Server is shutting down");
-		myAppCtx.destroy();
-	}
 	/**
 	 *
 	 */
 	private List<IResourceProvider> getDumbResourceProviders() {
+
 		List<IResourceProvider> resourceProviders = Lists.newArrayList();
-		resourceProviders.add(new DumbRestfulPatientResourceProvider());
-		resourceProviders.add(new DumbRestfulOrganizationProvider());
-		//resourceProviders.add(new RestfulObservationResourceProvider());
+
+		resourceProviders.add(dumbRestfulPatientResourceProvider);
+		resourceProviders.add(dumbRestfulOrganizationProvider);
 		return resourceProviders;
 	}
 }

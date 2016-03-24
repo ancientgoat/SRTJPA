@@ -10,22 +10,27 @@ import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import com.premierinc.entity.ChildEntity;
+import com.premierinc.entity.ParentEntity;
 import com.premierinc.service.ChildEntityService;
+import com.premierinc.util.JsonHelper;
 import java.util.Collections;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * All resource providers must implement IResourceProvider
  */
-//@Component
+@Component
 public class DumbRestfulPatientResourceProvider implements IResourceProvider {
 
-//	@Autowired
 	private ChildEntityService childEntityService;
 
-//	public DumbRestfulPatientResourceProvider(final ChildEntityService inChildEntityService) {
-//		this.childEntityService = inChildEntityService;
-//	}
+	@Autowired
+	public DumbRestfulPatientResourceProvider(final ChildEntityService inChildEntityService) {
+		this.childEntityService = inChildEntityService;
+	}
 
 	/**
 	 * The getResourceType method comes from IResourceProvider, and must
@@ -74,9 +79,10 @@ public class DumbRestfulPatientResourceProvider implements IResourceProvider {
 	public List<Patient> getPatientByFamily(
 			@RequiredParam(name = Patient.SP_FAMILY) StringParam inFamily) {
 
-		this.childEntityService.findFirstByNameOrNameGivenOrNameFamily(null, null,
+		ChildEntity child = this.childEntityService.findFirstByNameGivenOrNameFamily(null,
 				inFamily.getValue());
-		final Patient patient = _makeFakePatient(inFamily.getValue());
+
+		final Patient patient = _makeFakePatient("ByFamily", child, inFamily.getValue());
 		return Collections.singletonList(patient);
 	}
 
@@ -84,9 +90,12 @@ public class DumbRestfulPatientResourceProvider implements IResourceProvider {
 	public List<Patient> getPatientByName(
 			@RequiredParam(name = Patient.SP_NAME) StringParam inName) {
 
-		this.childEntityService.findFirstByNameOrNameGivenOrNameFamily(inName.getValue(), null,
-				null);
-		final Patient patient = _makeFakePatient(inName.getValue());
+		ChildEntity child = this.childEntityService.findFirstByNameOrNameGivenOrNameFamily(
+				inName.getValue(), "", "");
+
+		child.setParent(null);
+
+		final Patient patient = _makeFakePatient("ByName", child, inName.getValue());
 		return Collections.singletonList(patient);
 	}
 
@@ -94,9 +103,10 @@ public class DumbRestfulPatientResourceProvider implements IResourceProvider {
 	public List<Patient> getPatientByGiven(
 			@RequiredParam(name = Patient.SP_GIVEN) StringParam inGivenName) {
 
-		this.childEntityService.findFirstByNameOrNameGivenOrNameFamily(null, inGivenName.getValue(),
-				null);
-		final Patient patient = _makeFakePatient(inGivenName.getValue());
+		ChildEntity child = this.childEntityService.findFirstByNameGivenOrNameFamily(
+				inGivenName.getValue(), null);
+
+		final Patient patient = _makeFakePatient("ByGiven", child, inGivenName.getValue());
 		return Collections.singletonList(patient);
 	}
 
@@ -105,7 +115,30 @@ public class DumbRestfulPatientResourceProvider implements IResourceProvider {
 	 * @param inName
 	 * @return
 	 */
-	private Patient _makeFakePatient(final String inName) {
+	public static final Patient _makeFakePatient(final String inName) {
+		return _makeFakePatient(null, null, inName);
+	}
+
+	/**
+	 *
+	 * @param inName
+	 * @return
+	 */
+	public static final Patient _makeFakePatient(final String inPrefix, final ChildEntity inChild,
+			final String inName) {
+
+		String fullName = inName;
+
+		if (null != inChild) {
+			if (inChild.haveParent()) {
+				final ParentEntity parent = inChild.getParent();
+				fullName = String.format("%s:%s: Parent:%s", inPrefix, inChild.getFullName(),
+						parent.getFullName());
+			} else {
+				fullName = String.format("%s:%s: Parent:%s", inPrefix, inChild.getFullName(),
+						"*NULL*");
+			}
+		}
 
 		Patient patient = new Patient();
 		patient.addIdentifier();
@@ -119,8 +152,8 @@ public class DumbRestfulPatientResourceProvider implements IResourceProvider {
 		patient.setId(theId);
 
 		patient.addName();
-		patient.getName().get(0).addFamily(inName);
-		patient.getName().get(0).addGiven(String.format("PatientOne(%s)", inName));
+		patient.getName().get(0).addFamily(fullName);
+		patient.getName().get(0).addGiven(String.format("PatientOne(%s)", fullName));
 		patient.setGender(AdministrativeGenderEnum.MALE);
 		return patient;
 	}

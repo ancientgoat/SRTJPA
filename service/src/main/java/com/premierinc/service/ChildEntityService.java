@@ -12,16 +12,15 @@ import org.springframework.stereotype.Service;
 /**
  *
  */
-//~~@Service
+@Service
 public class ChildEntityService {
 
-	//~~@Autowired
 	private ChildEntityRepo childEntityRepo;
 
-//	@Autowired
-//	public ChildEntityService(final ChildEntityRepo inChildEntityRepo) {
-//		this.childEntityRepo = inChildEntityRepo;
-//	}
+	@Autowired
+	public ChildEntityService(final ChildEntityRepo inChildEntityRepo) {
+		this.childEntityRepo = inChildEntityRepo;
+	}
 
 	/**
 	 * Force (with FETCH) EAGER loading of parent with Child
@@ -29,9 +28,9 @@ public class ChildEntityService {
 	 * @param inPageable
 	 * @return
 	 */
-//	public Slice<ChildEntity> sliceAll(final Pageable inPageable) {
-//		return childEntityRepo.sliceAll(inPageable);
-//	}
+	public Slice<ChildEntity> sliceAll(final Pageable inPageable) {
+		return childEntityRepo.sliceAll(inPageable);
+	}
 
 	/**
 	 * Force (with FETCH) EAGER loading of parent with Child
@@ -54,5 +53,15 @@ public class ChildEntityService {
 			String inNameFamily) {
 		return childEntityRepo.findFirstByNameOrNameGivenOrNameFamily(inName, inNameGiven,
 				inNameFamily);
+	}
+
+	/**
+	 *
+	 * @param inNameGiven
+	 * @param inNameFamily
+	 * @return
+	 */
+	public ChildEntity findFirstByNameGivenOrNameFamily(String inNameGiven, String inNameFamily) {
+		return childEntityRepo.findFirstByNameGivenOrNameFamily(inNameGiven, inNameFamily);
 	}
 }

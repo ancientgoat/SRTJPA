@@ -9,20 +9,20 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name="parent_table") // , schema="dumbschema")
+@Table(name = "parent_table") // , schema="dumbschema")
 public class ParentEntity {
 
 	@Id
 	private Long id;
 
-	@Column(name="name")
+	@Column(name = "name")
 	private String name;
 
-	@Column(name="name_02")
-	private String name02;
+	@Column(name = "name_given")
+	private String nameGiven;
 
-	@Column(name="name_03")
-	private String name03;
+	@Column(name = "name_family")
+	private String nameFamily;
 
 	public Long getId() {
 		return id;
@@ -42,21 +42,25 @@ public class ParentEntity {
 		return this;
 	}
 
-	public String getName02() {
-		return name02;
+	public String getNameGiven() {
+		return nameGiven;
 	}
 
-	public ParentEntity setName02(String name02) {
-		this.name02 = name02;
+	public ParentEntity setNameGiven(String inNameGiven) {
+		this.nameGiven = inNameGiven;
 		return this;
 	}
 
-	public String getName03() {
-		return name03;
+	public String getNameFamily() {
+		return nameFamily;
 	}
 
-	public ParentEntity setName03(String name03) {
-		this.name03 = name03;
+	public ParentEntity setNameFamily(String inNameFamily) {
+		this.nameFamily = inNameFamily;
 		return this;
+	}
+
+	public String getFullName() {
+		return String.format("%s-%s-%s", getName(), getNameGiven(), getNameFamily());
 	}
 }

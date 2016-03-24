@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 /**
@@ -13,17 +14,17 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
  */
 //@RepositoryRestResource(collectionResourceRel = "childentity", path = "childentity")
 //~~@RepositoryRestResource(collectionResourceRel = "childentity", path = "childentity",exported = false)
-//@RepositoryRestResource(exported = false)
+@RepositoryRestResource(exported = false)
 public interface ChildEntityRepo extends JpaRepository<ChildEntity, Long> {
 
-//	/**
-//	 * Force (with FETCH) EAGER loading of parent with Child
-//	 *
-//	 * @param inPageable
-//	 * @return
-//	 */
-//	@Query(value = "SELECT C FROM ChildEntity C JOIN FETCH C.parent P")
-//	Slice<ChildEntity> sliceAll(final Pageable inPageable);
+	/**
+	 * Force (with FETCH) EAGER loading of parent with Child
+	 *
+	 * @param inPageable
+	 * @return
+	 */
+	@Query(value = "SELECT C FROM ChildEntity C JOIN FETCH C.parent P")
+	Slice<ChildEntity> sliceAll(final Pageable inPageable);
 
 	/**
 	 * Force (with FETCH) EAGER loading of parent with Child
@@ -35,6 +36,24 @@ public interface ChildEntityRepo extends JpaRepository<ChildEntity, Long> {
 			countQuery = "SELECT count(C) FROM ChildEntity C")
 	Page<ChildEntity> pageAll(final Pageable inPageable);
 
+	/**
+	 *
+	 * @param inName
+	 * @param inNameGiven
+	 * @param inNameFamily
+	 * @return
+	 */
 	ChildEntity findFirstByNameOrNameGivenOrNameFamily(String inName, String inNameGiven,
 			String inNameFamily);
+
+	/**
+	 *
+	 * @param inNameGiven
+	 * @param inNameFamily
+	 * @return
+	 */
+	@Query(value = "SELECT C FROM ChildEntity C LEFT JOIN FETCH C.parent P "
+			+ " WHERE C.nameGiven = :givenName OR C.nameFamily = :familyName")
+	ChildEntity findFirstByNameGivenOrNameFamily(@Param("givenName") String inNameGiven,
+			@Param("familyName") String inNameFamily);
 }

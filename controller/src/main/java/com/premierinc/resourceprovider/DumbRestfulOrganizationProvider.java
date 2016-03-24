@@ -10,10 +10,12 @@ import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import com.premierinc.model.MyOrganization;
+import org.springframework.stereotype.Component;
 
 /**
  *
  */
+@Component
 public class DumbRestfulOrganizationProvider implements IResourceProvider {
 
 	/**

@@ -13,24 +13,24 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name="child_table") // , schema="dumbschema")
+@Table(name = "child_table") // , schema="dumbschema")
 public class ChildEntity {
 
 	@Id
 	private Long id;
 
-	@Column(name="name")
+	@Column(name = "name")
 	private String name;
 
-	@Column(name="name_given")
+	@Column(name = "name_given")
 	private String nameGiven;
 
-	@Column(name="name_family")
+	@Column(name = "name_family")
 	private String nameFamily;
 
 	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
 	@JoinColumn(name = "parent_id")
-	private ParentEntity parent;
+	private ParentEntity parent = null;
 
 	public Long getId() {
 		return id;
@@ -75,6 +75,14 @@ public class ChildEntity {
 	public ChildEntity setParent(ParentEntity parent) {
 		this.parent = parent;
 		return this;
+	}
+
+	public boolean haveParent(){
+		return null != this.parent;
+	}
+
+	public String getFullName() {
+		return String.format("%s-%s-%s", getName(), getNameGiven(), getNameFamily());
 	}
 }
 
