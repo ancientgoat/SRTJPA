@@ -20,8 +20,8 @@ public class SrtApplication {
 		SpringApplication.run(SrtApplication.class, args);
 	}
 
-	@Bean
-	public ServletRegistrationBean servletRegistrationBean(){
-		return new ServletRegistrationBean(dumbFHIRRestfulServer, "/dumb/*");
-	}
+//	@Bean
+//	public ServletRegistrationBean servletRegistrationBean(){
+//		return new ServletRegistrationBean(dumbFHIRRestfulServer, "/dumb/*");
+//	}
 }

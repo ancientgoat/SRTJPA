@@ -1,12 +1,15 @@
 package com.premierinc.service;
 
+import com.premierinc.dto.DumbDto;
 import com.premierinc.entity.ChildEntity;
 import com.premierinc.repo.ChildEntityRepo;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 /**
@@ -63,5 +66,22 @@ public class ChildEntityService {
 	 */
 	public ChildEntity findFirstByNameGivenOrNameFamily(String inNameGiven, String inNameFamily) {
 		return childEntityRepo.findFirstByNameGivenOrNameFamily(inNameGiven, inNameFamily);
+	}
+
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public DumbDto gimmeDatDumbDto(String name) {
+		return childEntityRepo.gimmeDatDumbDto(name);
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public List<DumbDto> gimmeDemDumbDtos() {
+		return childEntityRepo.gimmeDemDumbDtos();
 	}
 }
