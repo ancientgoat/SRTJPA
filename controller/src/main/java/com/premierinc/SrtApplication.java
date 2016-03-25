@@ -21,7 +21,7 @@ public class SrtApplication {
 	}
 
 	@Bean
-	public ServletRegistrationBean servletRegistrationBean(){
+	public ServletRegistrationBean servletRegistrationBean() {
 		return new ServletRegistrationBean(dumbFHIRRestfulServer, "/dumb/*");
 	}
 }

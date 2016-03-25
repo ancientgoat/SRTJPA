@@ -38,7 +38,7 @@ public interface ChildEntityRepo extends JpaRepository<ChildEntity, Long> {
 	Page<ChildEntity> pageAll(final Pageable inPageable);
 
 	/**
-	 * Notice: No @Query, no implementation, and yet it works; must be magic.
+	 * Notice: No @Query, no implementation, and yet it works.  Must be magic.
 	 *
 	 * @param inName
 	 * @param inNameGiven

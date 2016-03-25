@@ -54,8 +54,11 @@ public class ChildEntityService {
 	 */
 	public ChildEntity findFirstByNameOrNameGivenOrNameFamily(String inName, String inNameGiven,
 			String inNameFamily) {
-		return childEntityRepo.findFirstByNameOrNameGivenOrNameFamily(inName, inNameGiven,
-				inNameFamily);
+
+		ChildEntity child = childEntityRepo.findFirstByNameOrNameGivenOrNameFamily(inName,
+				inNameGiven, inNameFamily);
+		child.setParent(null);
+		return child;
 	}
 
 	/**
@@ -69,7 +72,7 @@ public class ChildEntityService {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */

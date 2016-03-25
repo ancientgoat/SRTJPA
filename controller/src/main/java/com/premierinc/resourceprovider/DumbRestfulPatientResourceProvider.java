@@ -93,8 +93,6 @@ public class DumbRestfulPatientResourceProvider implements IResourceProvider {
 		ChildEntity child = this.childEntityService.findFirstByNameOrNameGivenOrNameFamily(
 				inName.getValue(), "", "");
 
-		child.setParent(null);
-
 		final Patient patient = _makeFakePatient("ByName", child, inName.getValue());
 		return Collections.singletonList(patient);
 	}

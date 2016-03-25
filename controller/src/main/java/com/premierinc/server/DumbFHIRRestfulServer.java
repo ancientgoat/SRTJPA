@@ -18,7 +18,6 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
  * define this in a web.xml file.
  */
 @Component
-//@WebServlet(urlPatterns= {"/fhir/*"}, displayName="FHIR Server")
 @WebServlet(urlPatterns = {"/dumb/*"}, displayName = "FHIR Server")
 public class DumbFHIRRestfulServer extends RestfulServer {
 
@@ -49,9 +48,7 @@ public class DumbFHIRRestfulServer extends RestfulServer {
 	 *
 	 */
 	private List<IResourceProvider> getDumbResourceProviders() {
-
 		List<IResourceProvider> resourceProviders = Lists.newArrayList();
-
 		resourceProviders.add(dumbRestfulPatientResourceProvider);
 		resourceProviders.add(dumbRestfulOrganizationProvider);
 		return resourceProviders;
